@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="cart.html">
+  <link rel="stylesheet" href="order.html">
+  <style>
+    .categories button.active {
+      background-color: red;
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="dashboard-body">
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="user-info">
+      <img src="Profile.jfif" alt="User" class="avatar">
+      <span>Hello, Welcome!</span>
+    </div>
+    <div class="icons">
+      <a href="notifications.html" class="bell">🔔</a>
+    </div>
+  </header>
+
+  <!-- Dashboard Content -->
+  <main class="dashboard">
+    <h2>What would you like to have today?</h2>
+
+    <!-- 🔎 Search Bar -->
+    <div style="margin: 15px 0; text-align: center;">
+      <input 
+        type="text" 
+        id="searchBar" 
+        placeholder="Search food..." 
+        style="width: 80%; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px;">
+    </div>
+
+    <!-- Categories -->
+    <h3 class="cat-title">Categories</h3>
+    <div class="categories">
+      <button class="active" onclick="filterMenu('all', this)">All</button>
+      <button onclick="filterMenu('lunch', this)">Lunch Meals</button>
+      <button onclick="filterMenu('snacks', this)">Snacks</button>
+      <button onclick="filterMenu('drinks', this)">Drinks</button>
+    </div>
+
+    
+    <div class="food-grid">
+      <!-- Lunch -->
+      <div class="food-card lunch">
+        <img src="rice.jpg" alt="Rice">
+        <h3>Rice</h3>
+        <p>₱10</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+      <div class="food-card lunch">
+        <img src="pork giniling.jpg" alt="Pork Giniling">
+        <h3>Pork Giniling</h3>
+        <p>₱40</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card lunch">
+        <img src="menudo.jfif" alt="Menudo">
+        <h3>Menudo</h3>
+        <p>₱50</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+      <div class="food-card lunch">
+
+        <img src="monggos.jpg" alt="Monggos">
+        <h3>Monggos</h3>
+        <p>₱30</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card lunch">
+        <img src="fried chicken.jfif" alt="Fried Chicken">
+        <h3>Fried Chicken</h3>
+        <p>₱35</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card lunch">
+        <img src="kaldereta.jfif" alt="Kaldereta">
+        <h3>Caldereta</h3>
+        <p>₱50</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card lunch">
+        <img src="ginataan.jfif" alt="Ginataan">
+        <h3>Ginataan</h3>
+        <p>₱30</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <!-- Snacks -->
+       <div class="food-card snacks">
+        <img src="sandwich.webp" alt="Sandwich">
+        <h3>Sandwich</h3>
+        <p>₱25</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+      <div class="food-card snacks">
+        <img src="casava cake.jpg" alt="Casava Cake">
+        <h3>Casava Cake</h3>
+        <p>₱15</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card snacks">
+        <img src="banana cue.jfif" alt="Banana Cue">
+        <h3>Banana Cue</h3>
+        <p>₱10</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card snacks">
+        <img src="turon.jfif" alt="Turon">
+        <h3>Turon</h3>
+        <p>₱15</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <!-- Drinks -->
+
+      <div class="food-card drinks">
+        <img src="water.jfif" alt="Water">
+        <h3>Water</h3>
+        <p>₱15</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card drinks">
+        <img src="sprite.webp" alt="Sprite">
+        <h3>Sprite</h3>
+        <p>₱15</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+      <div class="food-card drinks">
+        <img src="royal.webp" alt="Royal">
+        <h3>Royal</h3>
+        <p>₱15</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+      <div class="food-card drinks">
+        <img src="c2.jpg" alt="C2">
+        <h3>C2</h3>
+        <p>₱18</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card drinks">
+        <img src="icedd tea.webp" alt="Iced Tea">
+        <h3>Iced Tea</h3>
+        <p>₱18</p>
+        <button class="btn-small" onclick="location.href='cart.html'">Add +</button>
+      </div>
+
+      <div class="food-card drinks">
+        <img src="cooke.webp" alt="Softdrinks">
+        <h3>Coke</h3>
+        <p>₱15</p>
+        <button class="btn-small">Add +</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="active">🍽 Food</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="orders.html">📦 Order</a>
+    <a href="profile.html">👤 Profile</a>
+  </nav>
+
+ <!-- Add this script before </body> -->
+<script>
+const addButtons = document.querySelectorAll('.food-card .btn-small');
+
+addButtons.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    const card = this.parentElement;
+    const item = {
+      name: card.querySelector('h3').innerText,
+      price: parseFloat(card.querySelector('p').innerText.replace('₱','')), // convert price to number
+      img: card.querySelector('img').src,
+      quantity: 1
+    };
+
+    // Get existing cart
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Merge if item already exists
+    const existing = cart.find(i => i.name === item.name);
+    if(existing){
+      existing.quantity += 1;
+    } else {
+      cart.push(item);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(item.name + " added to cart!");
+  });
+});
+</script>
+
+<!-- Category filter -->
+<script>
+function filterMenu(category, btn) {
+  // Highlight active button
+  const allButtons = document.querySelectorAll('.categories button');
+  allButtons.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Show/hide items based on category
+  const items = document.querySelectorAll('.food-card');
+  items.forEach(item => {
+    if(category === 'all'){
+      item.style.display = 'block';
+    } else {
+      item.style.display = item.classList.contains(category) ? 'block' : 'none';
+    }
+  });
+}
+</script>
+
+<!-- 🔎 Search Filter -->
+<script>
+const searchBar = document.getElementById("searchBar");
+const foodCards = document.querySelectorAll(".food-card");
+const foodGrid = document.querySelector(".food-grid");
+
+searchBar.addEventListener("keyup", function() {
+  const searchText = searchBar.value.toLowerCase();
+  let found = false;
+
+  foodCards.forEach(card => {
+    const foodName = card.querySelector("h3").innerText.toLowerCase();
+    if(foodName.includes(searchText) && searchText !== ""){
+      card.style.display = "block";
+      found = true;
+    } else if (searchText === "") {
+      card.style.display = "block"; // Show all if search is empty
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  // Show "Not Available" if no items match
+  let notAvailable = document.getElementById("notAvailableMessage");
+  if(!found && searchText !== ""){
+    if(!notAvailable){
+      notAvailable = document.createElement("div");
+      notAvailable.id = "notAvailableMessage";
+      notAvailable.textContent = "Not Available";
+      notAvailable.style.color = "red";
+      notAvailable.style.fontWeight = "bold";
+      notAvailable.style.marginTop = "10px";
+      foodGrid.appendChild(notAvailable);
+    }
+  } else {
+    if(notAvailable){
+      notAvailable.remove();
+    }
+  }
+});
+</script>
+
+</body>
+</html>

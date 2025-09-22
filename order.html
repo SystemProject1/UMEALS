@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Orders</title>
+  <link rel="stylesheet" href="order.css">
+  <link rel="stylesheet" href="cart.css">
+  <link rel="stylesheet" href="cart.html">
+</head>
+<body>
+
+  <header>
+    <button onclick="history.back()">⬅</button>
+    <h2>Order Status</h2>
+    <a href="notifications.html">🔔</a>
+  </header>
+
+  <div class="orders">
+    <div class="order-header">
+      <span>Order Item</span>
+      <span>Pick-up Time</span>
+      <span>Status</span>
+    </div>
+
+    <div id="order-list"></div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html">🍽 Food</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="order.html" class="active">📦 Order</a>
+    <a href="profile.html">👤 Profile</a>
+  </nav>
+
+<script>
+ let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+function renderOrders() {
+  const container = document.getElementById("order-list");
+  container.innerHTML = "";
+
+  orders.forEach((order, index) => {
+    let minutesPassed = Math.floor((Date.now() - order.placedAt) / 60000);
+    let allowCancel = minutesPassed < 15 && order.status === "Pending";
+
+    // Auto move to walk-in if lapsed
+    if (minutesPassed >= 15 && order.status === "Pending") {
+      order.status = "Walkin";
+      localStorage.setItem("orders", JSON.stringify(orders));
+    }
+
+    container.innerHTML += `
+      <div class="order-card">
+        <img src="${order.img}" alt="${order.name}">
+        <div class="order-info">
+          <h3>${order.name}</h3>
+          <p>₱${order.price} × ${order.quantity}</p>
+        </div>
+        <span class="pickup-time">${order.time}</span>
+        <span class="status ${order.status}">${order.status}</span>
+        ${allowCancel ? `<button class="cancel-btn" onclick="cancelOrder(${index})">✖</button>` : ""}
+      </div>
+    `;
+  });
+}
+
+</script>
+
+</body>
+</html>

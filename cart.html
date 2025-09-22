@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Cart</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="cart.css">
+  <link rel="stylesheet" href="order.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="user-info">
+      <img src="Profile.jfif" alt="User" class="avatar">
+      <span>Hello, Welcome!</span>
+    </div>
+    <div class="icons">
+      <a href="notifications.html" class="bell">🔔</a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard">
+    <h2>Your Cart</h2>
+    <div id="cart-items"></div>
+    <div id="cart-total"></div>
+
+    <!-- 🔹 Pick-up Time -->
+    <div class="pickup-time-container">
+      <label for="pickup-time">Select Pick-up Time:</label>
+      <input type="time" id="pickup-time" required>
+    </div>
+
+    <!-- Place Order Button -->
+    <div style="text-align: center;">
+      <button id="order-placed">Place Order</button>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="dashboard.html">🍽 Food</a>
+    <a href="cart.html" class="active">🛒 Cart</a>
+    <a href="orders.html">📦 Order</a>
+    <a href="profile.html">👤 Profile</a>
+  </nav>
+
+  <!-- Cart Script -->
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const cartContainer = document.querySelector('#cart-items');
+  const cartTotal = document.querySelector('#cart-total');
+  const pickupInput = document.getElementById('pickup-time');
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  function renderCart() {
+    cartContainer.innerHTML = '';
+
+    if(cart.length === 0){
+      cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+      cartTotal.innerHTML = "";
+      return;
+    }
+
+    let total = 0;
+
+    cart.forEach((item, index) => {
+      total += item.price * item.quantity;
+
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div>
+          <h3>${item.name}</h3>
+          <p>₱${item.price} × ${item.quantity} = ₱${item.price * item.quantity}</p>
+          <button class="remove-btn">Remove</button>
+        </div>
+      `;
+      cartContainer.appendChild(div);
+
+      div.querySelector('.remove-btn').addEventListener('click', () => {
+        cart.splice(index, 1); 
+        localStorage.setItem('cart', JSON.stringify(cart)); 
+        renderCart(); 
+      });
+    });
+
+    cartTotal.innerHTML = `
+  <div class="total-container">
+    <span>Total Cost:</span>
+    <strong>₱${total}</strong>
+  </div>
+`;
+  }
+
+  renderCart();
+
+  // Place Order Button
+  document.getElementById('order-placed').addEventListener('click', () => {
+    if(cart.length === 0){
+      alert("Your cart is empty!");
+      return;
+    }
+
+    const pickupTime = pickupInput.value;
+    if(!pickupTime){
+      alert("Please select a pick-up time!");
+      return;
+    }
+
+    // Save order to localStorage.orders
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let newOrders = cart.map(item => ({
+      ...item,
+      time: pickupTime,
+      status: "Pending",
+      placedAt: Date.now()
+    }));
+
+    orders = orders.concat(newOrders);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Clear cart
+    cart = [];
+    localStorage.removeItem('cart');
+
+    alert("Order placed successfully!");
+    renderCart();
+
+    // Redirect to orders page
+    window.location.href = "orders.html";
+  });
+});
+</script>
+
+</body>
+</html>

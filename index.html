@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+  <!-- Login Page -->
+  <div class="login-container">
+    <h1 class="brand">UMEAL</h1>
+    <img src="logo (4).jfif" alt="UMEAL" class="school-logo">
+
+    <!-- Redirects to dashboard.html when logging in -->
+    <form class="login-form" action="dashboard.html" method="GET">
+      <label for="idnumber">ID NUMBER</label>
+      <input type="text" id="idnumber" placeholder="Enter ID Number" required>
+
+      <label for="password">PASSWORD</label>
+      <input type="password" id="password" placeholder="Enter Password" required>
+
+      <button type="submit" class="btn">Log in</button>
+
+      <a href="forgot.html" class="forgot">Forgot Password?</a>
+    </form>
+  </div>
+
+</body>
+</html>
