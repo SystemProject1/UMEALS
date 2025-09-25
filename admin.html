@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Staff Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .order-card {border:1px solid #ccc;padding:10px;margin:10px;border-radius:8px;}
+    .btn {padding:5px 10px;margin:5px;cursor:pointer;border:none;border-radius:5px;}
+    .ready {background:orange;color:#fff;}
+    .walkin {background:green;color:#fff;}
+    .claimed {background:gray;color:#fff;}
+    .delete {background:red;color:#fff;}
+  </style>
+</head>
+<body>
+  <h2>Staff Panel - Manage Orders</h2>
+  <div id="staff-orders"></div>
+
+  <script>
+  let allOrders = JSON.parse(localStorage.getItem("allOrders")) || [];
+
+  function renderStaffOrders() {
+    const container = document.getElementById("staff-orders");
+    container.innerHTML = "";
+
+    if (allOrders.length === 0) {
+      container.innerHTML = "<p>No orders found.</p>";
+      return;
+    }
+
+    allOrders.forEach((order, index) => {
+      container.innerHTML += `
+        <div class="order-card">
+          <img src="${order.img}" alt="${order.name}" width="50">
+          <strong>${order.name}</strong> (${order.quantity}) - ₱${order.price * order.quantity}<br>
+          <small>Status: ${order.status}</small><br>
+          <button class="btn ready" onclick="markReady(${index})">Mark Ready</button>
+          <button class="btn walkin" onclick="markWalkin(${index})">Mark Walk-in</button>
+          <button class="btn claimed" onclick="markClaimed(${index})">Mark Claimed</button>
+          <button class="btn delete" onclick="deleteOrder(${index})">Delete</button>
+        </div>
+      `;
+    });
+  }
+
+  function markReady(i){ allOrders[i].status="Ready"; save(); }
+  function markWalkin(i){ allOrders[i].status="Walk-in"; save(); }
+  function markClaimed(i){ allOrders[i].status="Claimed"; save(); }
+  function deleteOrder(i){ allOrders.splice(i,1); save(); }
+
+  function save(){
+    localStorage.setItem("allOrders", JSON.stringify(allOrders));
+    renderStaffOrders();
+  }
+
+  renderStaffOrders();
+  </script>
+</body>
+</html>
