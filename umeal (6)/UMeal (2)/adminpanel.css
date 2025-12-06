@@ -1,0 +1,193 @@
+body {
+  background-color: white; /* ✅ Clean white background */
+  color: black;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.order-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px auto;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn {
+  padding: 5px 10px;
+  margin: 5px 3px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.1s;
+}
+
+/* ✅ Original button colors */
+.ready {
+  background: orange;
+  color: #fff;
+}
+
+.claimed {
+  background: gray;
+  color: #fff;
+}
+
+.delete {
+  background: red;
+  color: #fff;
+}
+
+img {
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+/* ✅ Highlight when active (clicked and stays) */
+.btn.active-filter {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transform: scale(1.03);
+  filter: brightness(1.2);
+  border: 2px solid rgba(0, 0, 0, 0.3);
+}
+/* ✅ Button active color after clicked */
+.btn.active {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+/* Specific colors for clicked (active) states */
+.ready.active {
+  background: green !important;
+}
+
+.claimed.active {
+  background: steelblue !important;
+}
+
+.delete.active {
+  background: darkred !important;
+}
+.note-box {
+      margin-top: 10px;
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .note-box textarea {
+      width: 100%;
+      height: 50px;
+      border-radius: 4px;
+      padding: 6px;
+      resize: none;
+    }
+    .note-box button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    /* Tab Buttons */
+    .tab-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .tab-buttons button {
+      padding: 8px 16px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+    }
+    .tab-buttons button.active {
+      background: #0056b3;
+    }
+
+    /* Stock Section */
+    .stock-section {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    .stock-section h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .stock-form input, .stock-form select {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+    .stock-form button {
+      padding: 8px 14px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .stock-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .stock-table th, .stock-table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .stock-table th {
+      background: #eaeaea;
+    }
+    .stock-actions button {
+      margin: 0 2px;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-btn { background: #ffc107; color: black; }
+    .delete-btn { background: #dc3545; color: white; }
+
+    /* --- filter buttons style --- */
+    .order-filters { text-align: center; margin-bottom: 12px; }
+    .order-filters .filter-btn {
+      padding: 6px 12px;
+      margin: 0 6px;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      background: #fff;
+      cursor: pointer;
+    }
+    .order-filters .filter-btn.active {
+      background: #007bff;
+      color: #fff;
+      border-color: #0062cc;
+    }
+    .order-card { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: #f9f9f9; }
+
+    /* --- Daily Specials --- */
+    .specials-section { display: none; margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 10px; border: 1px solid #ccc; }
+    .specials-list { margin-top: 15px; }
+    .specials-item { margin-bottom: 6px; }
+    .specials-item button { margin-left: 6px; background: #dc3545; color: white; border: none; padding: 2px 6px; border-radius: 4px; cursor: pointer; }
+  

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMEAL - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="order.html" />
+  </head>
+  <body class="dashboard-body">
+    <header class="top-bar">
+      <div class="user-info">
+        <a href="profile.html">
+          <img
+            src="uploads/Profile.jfif"
+            alt="User"
+            class="avatar"
+            style="cursor: pointer"
+          />
+        </a>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <div style="margin: 15px 0; text-align: center">
+        <input
+          type="text"
+          id="searchBar"
+          placeholder="Search food..."
+          style="
+            width: 80%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          "
+        />
+      </div>
+
+      <h3 class="cat-title">Categories</h3>
+
+      <div class="categories">
+        <button class="active" onclick="filterMenu('all', this)">All</button>
+        <button onclick="filterMenu('lunch', this)">Lunch Meals</button>
+        <button onclick="filterMenu('snacks', this)">Snacks</button>
+        <button onclick="filterMenu('drinks', this)">Drinks</button>
+      </div>
+
+      <!-- FOOD LIST -->
+      <div class="food-grid">
+        <!-- Lunch -->
+        <div class="food-card lunch" data-name="Rice">
+          <img src="uploads/rice.jpg" />
+          <h3>Rice</h3>
+          <p>₱10</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Humba">
+          <img src="uploads/humba.jpg" />
+          <h3>Humba</h3>
+          <p>₱50</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Pork Giniling">
+          <img src="uploads/pork giniling.jpg" />
+          <h3>Pork Giniling</h3>
+          <p>₱40</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Menudo">
+          <img src="uploads/menudo.jfif" />
+          <h3>Menudo</h3>
+          <p>₱50</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Monggos">
+          <img src="uploads/monggos.jpg" />
+          <h3>Monggos</h3>
+          <p>₱30</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Fried Chicken">
+          <img src="uploads/fried chicken.jfif" />
+          <h3>Fried Chicken</h3>
+          <p>₱35</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Caldereta">
+          <img src="uploads/kaldereta.jfif" />
+          <h3>Caldereta</h3>
+          <p>₱50</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card lunch" data-name="Ginataan">
+          <img src="uploads/ginataan.jfif" />
+          <h3>Ginataan</h3>
+          <p>₱30</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+
+        <!-- Snacks -->
+        <div class="food-card snacks" data-name="Sandwich">
+          <img src="uploads/sandwich.webp" />
+          <h3>Sandwich</h3>
+          <p>₱25</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Casava Cake">
+          <img src="uploads/casava cake.jpg" />
+          <h3>Casava Cake</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Banana Cue">
+          <img src="uploads/banana cue.jfif" />
+          <h3>Banana Cue</h3>
+          <p>₱10</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Turon">
+          <img src="uploads/turon.jfif" />
+          <h3>Turon</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Combi">
+          <img src="uploads/combi.jpg" />
+          <h3>Combi</h3>
+          <p>₱8</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Rebisco Crackers">
+          <img src="uploads/Rebisco Crackers.webp" />
+          <h3>Rebisco Crackers</h3>
+          <p>₱8</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card snacks" data-name="Hansel">
+          <img src="uploads/hansel.png" />
+          <h3>Hansel</h3>
+          <p>₱8</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+
+        <!-- Drinks -->
+        <div class="food-card drinks" data-name="Water">
+          <img src="uploads/water.jfif" />
+          <h3>Water</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="Coke">
+          <img src="uploads/cooke.webp" />
+          <h3>Coke</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="Sprite">
+          <img src="uploads/sprite.webp" />
+          <h3>Sprite</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="Mountain Dew">
+          <img src="uploads/mountain dew.webp" />
+          <h3>Mountain Dew</h3>
+          <p>₱35</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="Royal">
+          <img src="uploads/royal.webp" />
+          <h3>Royal</h3>
+          <p>₱15</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="C2">
+          <img src="uploads/c2.jpg" />
+          <h3>C2</h3>
+          <p>₱18</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+        <div class="food-card drinks" data-name="Yakult">
+          <img src="uploads/yakult.jpg" />
+          <h3>Yakult</h3>
+          <p>₱18</p>
+          <p class="stock-info"></p>
+          <button class="btn-small">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- 🔥 DAILY SPECIALS -->
+      <section class="weekly-menu" id="special-section" style="display: none">
+        <h3>Today's Special</h3>
+        <div id="daily-specials"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="dashboard.html" class="active">🍽 Food</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="order.html">📦 Order</a>
+    </nav>
+
+    <!-- SCRIPT -->
+    <script>
+      function filterMenu(category, btn) {
+        document
+          .querySelectorAll(".categories button")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.querySelectorAll(".food-card").forEach((item) => {
+          item.style.display =
+            category === "all" || item.classList.contains(category)
+              ? "block"
+              : "none";
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        /* STOCK + CART */
+        if (!localStorage.getItem("foodStock")) {
+          const initialStock = {
+            Rice: 10,
+            Humba: 50,
+            "Pork Giniling": 40,
+            Menudo: 50,
+            Monggos: 35,
+            "Fried Chicken": 35,
+            Caldereta: 50,
+            Ginataan: 35,
+            Sandwich: 25,
+            "Casava Cake": 15,
+            "Banana Cue": 10,
+            Turon: 15,
+            Combi: 8,
+            "Rebisco Crackers": 8,
+            Hansel: 8,
+            Water: 15,
+            Coke: 15,
+            Sprite: 15,
+            "Mountain Dew": 35,
+            Royal: 15,
+            C2: 18,
+            Yakult: 18,
+          };
+          localStorage.setItem("foodStock", JSON.stringify(initialStock));
+        }
+
+        function syncDashboardToStock() {
+          let stock = JSON.parse(localStorage.getItem("foodStock")) || {};
+          document.querySelectorAll(".food-card").forEach((card) => {
+            const name = card.dataset.name;
+            if (!(name in stock)) stock[name] = 10;
+          });
+          localStorage.setItem("foodStock", JSON.stringify(stock));
+        }
+
+        function loadStock() {
+          const stock = JSON.parse(localStorage.getItem("foodStock")) || {};
+          document.querySelectorAll(".food-card").forEach((card) => {
+            const name = card.dataset.name;
+            const qty = stock[name] || 0;
+            const stockInfo = card.querySelector(".stock-info");
+            const btn = card.querySelector(".btn-small");
+
+            if (qty <= 0) {
+              stockInfo.innerHTML =
+                '<span class="not-available">Not Available</span>';
+              btn.disabled = true;
+              card.style.opacity = 0.5; // GREY OUT THE CARD
+              card.style.pointerEvents = "none"; // Prevent clicks
+            } else {
+              stockInfo.textContent = `Available: ${qty}`;
+              btn.disabled = false;
+              card.style.opacity = 1;
+              card.style.pointerEvents = "auto";
+            }
+          });
+        }
+
+        function updateCartBadge() {
+          const cart = JSON.parse(localStorage.getItem("cart")) || [];
+          let count = cart.reduce((acc, item) => acc + item.quantity, 0);
+          let badge = document.getElementById("cart-badge");
+          if (!badge) {
+            const cartLink = document.querySelector(
+              'nav.bottom-nav a[href="cart.html"]'
+            );
+            badge = document.createElement("span");
+            badge.id = "cart-badge";
+            badge.style.cssText =
+              "position:absolute;background:red;color:white;font-size:12px;border-radius:50%;padding:2px 6px;top:-5px;right:-10px;";
+            cartLink.style.position = "relative";
+            cartLink.appendChild(badge);
+          }
+          badge.textContent = count > 0 ? count : "";
+        }
+
+        document.querySelectorAll(".food-card .btn-small").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const card = this.parentElement;
+            const name = card.dataset.name;
+            let stock = JSON.parse(localStorage.getItem("foodStock")) || {};
+            if ((stock[name] || 0) <= 0) {
+              alert("Sorry, this item is not available!");
+              return;
+            }
+
+            stock[name] -= 1;
+            localStorage.setItem("foodStock", JSON.stringify(stock));
+            loadStock();
+
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const existing = cart.find((i) => i.name === name);
+            if (existing) existing.quantity += 1;
+            else
+              cart.push({
+                name: name,
+                price:
+                  parseFloat(
+                    card.querySelector("p").innerText.replace("₱", "")
+                  ) || 10,
+                img: card.querySelector("img").src,
+                quantity: 1,
+              });
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartBadge();
+
+            const popup = document.createElement("div");
+            popup.textContent = `✅ ${name} added to cart!`;
+            Object.assign(popup.style, {
+              position: "fixed",
+              bottom: "20px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              background: "rgba(0,0,0,0.8)",
+              color: "#fff",
+              padding: "10px 20px",
+              borderRadius: "10px",
+              zIndex: 9999,
+            });
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 2000);
+          });
+        });
+
+        document
+          .getElementById("searchBar")
+          .addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll(".food-card").forEach((card) => {
+              card.style.display = card.dataset.name
+                .toLowerCase()
+                .includes(query)
+                ? "block"
+                : "none";
+            });
+          });
+
+        syncDashboardToStock();
+        loadStock();
+        updateCartBadge();
+        // ✅ Global smart search tags (fix: accessible by BOTH listeners)
+        const searchTags = {
+          rice: ["kanin", "extra rice", "carbs"],
+          humba: ["baboy", "ulam", "pork"],
+          "pork giniling": ["giniling", "ground pork", "ulam"],
+          menudo: ["pork", "sauce", "ulam"],
+          monggos: ["munggo", "gulay", "mongo"],
+          "fried chicken": ["manok", "chicken", "prito"],
+          caldereta: ["kaldereta", "beef", "stew"],
+          ginataan: ["gata", "coconut", "sweet"],
+
+          sandwich: ["bread", "baon", "snack"],
+          "casava cake": ["cassava", "cake", "kakanin"],
+          "banana cue": ["banana", "saging", "merienda"],
+          turon: ["saging", "lumpia", "snack"],
+          combi: ["snack", "candy"],
+          "rebisco crackers": ["biskwit", "cracker"],
+          hansel: ["biscuit", "cookie"],
+
+          water: ["drinks", "bottled", "refreshment"],
+          coke: ["softdrinks", "cola", "soda"],
+          sprite: ["softdrinks", "lemon", "soda"],
+          "mountain dew": ["dew", "softdrinks", "soda"],
+          royal: ["orange", "softdrinks"],
+          c2: ["green tea", "bottle"],
+          yakult: ["probiotic", "drink"],
+        };
+
+        document
+          .getElementById("searchBar")
+          .addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+
+            document.querySelectorAll(".food-card").forEach((card) => {
+              const name = card.dataset.name.toLowerCase();
+              const priceText = card
+                .querySelector("p")
+                .innerText.replace("₱", "");
+              const price = priceText.toString().toLowerCase();
+
+              // ✅ match by name OR price
+              if (name.includes(query) || price.includes(query)) {
+                card.style.display = "block";
+              } else {
+                card.style.display = "none";
+              }
+            });
+          });
+
+        // ✅ SMART SEARCH extra matching
+        document
+          .getElementById("searchBar")
+          .addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+
+            document.querySelectorAll(".food-card").forEach((card) => {
+              const name = card.dataset.name.toLowerCase();
+              const tags = searchTags[name] || [];
+
+              const matchByTag = tags.some((tag) => tag.includes(query));
+
+              if (matchByTag) {
+                card.style.display = "block";
+              }
+            });
+          });
+
+        /* 🔥 DAILY SPECIALS FIX */
+        const section = document.getElementById("special-section");
+        const container = document.getElementById("daily-specials");
+        const weeklySpecials = JSON.parse(
+          localStorage.getItem("dailySpecials") || "{}"
+        );
+        const today = new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+        });
+
+        container.innerHTML = "";
+        if (weeklySpecials[today] && weeklySpecials[today].length > 0) {
+          section.style.display = "block";
+          weeklySpecials[today].forEach((name) => {
+            const card = document.querySelector(
+              `.food-card[data-name="${name}"]`
+            );
+            if (card) {
+              const clone = card.cloneNode(true);
+              clone.querySelector("h3").innerHTML += " 🔥";
+              clone.style.display = "inline-block";
+              container.appendChild(clone);
+
+              clone
+                .querySelector(".btn-small")
+                .addEventListener("click", () => {
+                  card.querySelector(".btn-small").click();
+                });
+            } else {
+              // fallback card if not found
+              const div = document.createElement("div");
+              div.className = "food-card";
+              div.style.display = "inline-block";
+              div.innerHTML = `<h3>${name} 🔥</h3><p>Check Admin for price</p>`;
+              container.appendChild(div);
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMEAL - Admin Panel</title>
+    <link rel="stylesheet" href="adminpanel.css" />
+  </head>
+  <body>
+    <h2>Admin Panel</h2>
+
+    <div style="text-align: center; margin-bottom: 20px">
+      <button
+        id="logoutBtn"
+        style="
+          background: red;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 5px;
+          cursor: pointer;
+        "
+      >
+        Log Out
+      </button>
+    </div>
+
+    <div class="tab-buttons">
+      <button id="ordersTab" class="active" onclick="showTab('orders')">
+        Manage Orders
+      </button>
+      <button id="stockTab" onclick="showTab('stock')">Manage Stock</button>
+      <button id="specialsTab" onclick="showTab('specials')">
+        Daily Specials
+      </button>
+    </div>
+
+    <!-- Orders Section -->
+    <div id="orders" class="orders-section">
+      <div class="order-filters" id="order-filters">
+        <button class="filter-btn active" onclick="filterOrders('all')">
+          All
+        </button>
+        <button class="filter-btn" onclick="filterOrders('Ready')">
+          Ready
+        </button>
+        <button class="filter-btn" onclick="filterOrders('Claimed')">
+          Claimed
+        </button>
+      </div>
+      <div id="staff-orders"></div>
+    </div>
+
+    <!-- Stock Section -->
+    <div id="stock" class="stock-section">
+      <h3>📦 Stock Management</h3>
+      <div class="stock-form" style="text-align: center">
+        <input type="text" id="stockName" placeholder="Item Name" />
+        <input type="number" id="stockQty" placeholder="Quantity" />
+        <input type="number" id="stockPrice" placeholder="Price (₱)" />
+        <button onclick="addStock()">Add / Update Stock</button>
+      </div>
+      <table class="stock-table" id="stockTable">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Price (₱)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Daily Specials Section -->
+    <div id="specials" class="specials-section">
+      <h3>⭐ Daily Specials</h3>
+      <div class="stock-form" style="text-align: center">
+        <select id="specialDay">
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+        <select id="specialItem"></select>
+        <button onclick="addSpecial()">Add Special</button>
+      </div>
+      <div class="specials-list" id="specialsList"></div>
+    </div>
+
+    <script>
+      // ---------------- Tabs ----------------
+      function showTab(tab) {
+        document.getElementById("orders").style.display =
+          tab === "orders" ? "block" : "none";
+        document.getElementById("stock").style.display =
+          tab === "stock" ? "block" : "none";
+        document.getElementById("specials").style.display =
+          tab === "specials" ? "block" : "none";
+        document
+          .getElementById("ordersTab")
+          .classList.toggle("active", tab === "orders");
+        document
+          .getElementById("stockTab")
+          .classList.toggle("active", tab === "stock");
+        document
+          .getElementById("specialsTab")
+          .classList.toggle("active", tab === "specials");
+      }
+
+      // ---------------- Orders ----------------
+      function loadAllOrders() {
+        let allOrders = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          let key = localStorage.key(i);
+          if (key.startsWith("orders_")) {
+            let userOrders = JSON.parse(localStorage.getItem(key)) || [];
+            const username = key.replace("orders_", "") || "Guest";
+            userOrders.forEach((o) => {
+              if (!o.user || o.user === "guest") o.user = username;
+              o._userKey = key; // Keep the original key reference
+            });
+            allOrders = allOrders.concat(userOrders);
+          }
+        }
+        return allOrders;
+      }
+
+      function groupOrdersByCode(orders) {
+        const grouped = {};
+        orders.forEach((order) => {
+          const code = order.code || "NO_CODE";
+          if (!grouped[code]) grouped[code] = [];
+          grouped[code].push(order);
+        });
+        return grouped;
+      }
+
+      let currentFilter = "all";
+      function filterOrders(status) {
+        currentFilter = status;
+        document.querySelectorAll("#order-filters .filter-btn").forEach((b) => {
+          b.classList.toggle(
+            "active",
+            b.textContent === (status === "all" ? "All" : status)
+          );
+        });
+        renderStaffOrders();
+      }
+
+      function renderStaffOrders() {
+        const container = document.getElementById("staff-orders");
+        container.innerHTML = "";
+        let allOrders = loadAllOrders();
+
+        if (currentFilter !== "all") {
+          allOrders = allOrders.filter((o) => o.status === currentFilter);
+        }
+
+        if (allOrders.length === 0) {
+          container.innerHTML = "<p>No orders found.</p>";
+          return;
+        }
+
+        const groupedOrders = groupOrdersByCode(allOrders);
+
+        Object.keys(groupedOrders).forEach((code) => {
+          const orders = groupedOrders[code];
+          const firstOrder = orders[0];
+          const status = firstOrder.status;
+          const customer = firstOrder.user || "Guest";
+          const pickupTime = firstOrder.time;
+          const orderDate =
+            new Date(firstOrder.placedAt).toLocaleDateString() +
+            " " +
+            new Date(firstOrder.placedAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+          const div = document.createElement("div");
+          div.className = "order-card";
+
+          let itemsHTML = orders
+            .map(
+              (o) => `
+      <div style="margin-bottom: 6px;">
+        <img src="${o.img}" alt="${
+                o.name
+              }" width="40" style="vertical-align: middle;">
+        <strong>${o.name}</strong> (${o.quantity}) - ₱${o.price * o.quantity}
+      </div>
+    `
+            )
+            .join("");
+
+          if (currentFilter === "all") {
+            const disableReady = status === "Claimed";
+            const existingNote =
+              localStorage.getItem("order_note_" + code) || "";
+
+            div.innerHTML = `
+        <p><strong>Order Code:</strong> ${code}</p>
+        <p><strong>Customer:</strong> ${customer}</p>
+        <p><strong>Order Date:</strong> ${orderDate}</p>
+        <p><strong>Pickup Time:</strong> ${pickupTime}</p>
+        ${itemsHTML}
+        <small><strong>Status:</strong> <span class="status-text">${status}</span></small><br><br>
+
+        <button class="btn ready" data-code="${code}" ${
+              disableReady ? "disabled" : ""
+            }>Mark Ready</button>
+        <button class="btn claimed" data-code="${code}">Mark Claimed</button>
+        <button class="btn delete" data-code="${code}">Delete</button>
+
+        <div class="note-box">
+          <textarea id="note_${code}" placeholder="Write a note...">${existingNote}</textarea>
+          <button onclick="saveNote('${code}')">Save Note</button>
+        </div>
+      `;
+          } else if (currentFilter === "Claimed") {
+            // Get rating/feedback from allOrders stored by customer
+            const savedOrder = JSON.parse(
+              localStorage.getItem("allOrders") || "[]"
+            )
+              .flat()
+              .find((o) => o.code === code);
+
+            // Convert numeric rating to star display
+            let ratingStars = "No rating yet";
+            if (savedOrder && savedOrder.rating) {
+              ratingStars = "";
+              for (let i = 1; i <= 5; i++) {
+                ratingStars += i <= savedOrder.rating ? "★" : "☆";
+              }
+            }
+
+            const feedback =
+              savedOrder && savedOrder.feedback
+                ? savedOrder.feedback
+                : "No feedback provided";
+
+            div.innerHTML = `
+        <p><strong>Order Code:</strong> ${code}</p>
+        <p><strong>Customer:</strong> ${customer}</p>
+        <p><strong>Order Date:</strong> ${orderDate}</p>
+        <p><strong>Pickup Time:</strong> ${pickupTime}</p>
+        ${itemsHTML}
+        <small><strong>Status:</strong> <span class="status-text">${status}</span></small><br>
+        <small><strong>Rating:</strong> <span style="color:gold;">${ratingStars}</span></small><br>
+        <small><strong>Feedback:</strong> ${feedback}</small>
+      `;
+          } else {
+            // Other filters
+            div.innerHTML = `
+        <p><strong>Order Code:</strong> ${code}</p>
+        <p><strong>Customer:</strong> ${customer}</p>
+        <p><strong>Order Date:</strong> ${orderDate}</p>
+        <p><strong>Pickup Time:</strong> ${pickupTime}</p>
+        ${itemsHTML}
+        <small><strong>Status:</strong> <span class="status-text">${status}</span></small>
+      `;
+          }
+
+          container.appendChild(div);
+        });
+
+        if (currentFilter === "all") {
+          document.querySelectorAll(".ready").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              updateOrderStatus(btn.dataset.code, "Ready");
+            });
+          });
+          document.querySelectorAll(".claimed").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              updateOrderStatus(btn.dataset.code, "Claimed");
+            });
+          });
+          document.querySelectorAll(".delete").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              deleteOrderGroup(btn.dataset.code);
+            });
+          });
+        }
+      }
+
+      function updateOrderStatus(orderCode, newStatus) {
+        for (let i = 0; i < localStorage.length; i++) {
+          let key = localStorage.key(i);
+          if (key.startsWith("orders_")) {
+            let orders = JSON.parse(localStorage.getItem(key)) || [];
+            orders = orders.map((o) =>
+              o.code === orderCode ? { ...o, status: newStatus } : o
+            );
+            localStorage.setItem(key, JSON.stringify(orders));
+          }
+        }
+        renderStaffOrders();
+      }
+
+      function deleteOrderGroup(orderCode) {
+        for (let i = 0; i < localStorage.length; i++) {
+          let key = localStorage.key(i);
+          if (key.startsWith("orders_")) {
+            let orders = JSON.parse(localStorage.getItem(key)) || [];
+            orders = orders.filter((o) => o.code !== orderCode);
+            localStorage.setItem(key, JSON.stringify(orders));
+          }
+        }
+        renderStaffOrders();
+      }
+
+      function saveNote(orderCode) {
+        const note = document.getElementById("note_" + orderCode).value.trim();
+        if (!note) return alert("Please enter a note before saving.");
+        localStorage.setItem("order_note_" + orderCode, note);
+        alert("✅ Note saved successfully!");
+      }
+
+      // ---------------- Logout ----------------
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("currentUser");
+        window.location.href = "admin-login.html";
+      });
+
+      // ---------------- Stock ----------------
+      function loadStock() {
+        if (!localStorage.getItem("umeal_stock")) {
+          const defaultStock = [
+            { name: "Rice", quantity: 50, price: 10 },
+            { name: "Humba", quantity: 20, price: 50 },
+            { name: "Pork Giniling", quantity: 25, price: 40 },
+            { name: "Menudo", quantity: 30, price: 50 },
+            { name: "Monggos", quantity: 15, price: 30 },
+            { name: "Fried Chicken", quantity: 10, price: 35 },
+            { name: "Caldereta", quantity: 20, price: 50 },
+            { name: "Ginataan", quantity: 15, price: 30 },
+            { name: "Sandwich", quantity: 25, price: 25 },
+            { name: "Casava Cake", quantity: 15, price: 15 },
+            { name: "Banana Cue", quantity: 10, price: 10 },
+            { name: "Turon", quantity: 15, price: 15 },
+            { name: "Combi", quantity: 20, price: 8 },
+            { name: "Rebisco Crackers", quantity: 40, price: 8 },
+            { name: "Hansel", quantity: 40, price: 8 },
+            { name: "Water", quantity: 50, price: 15 },
+            { name: "Coke", quantity: 40, price: 15 },
+            { name: "Mountain Dew", quantity: 40, price: 35 },
+            { name: "Royal", quantity: 40, price: 15 },
+            { name: "C2", quantity: 40, price: 18 },
+            { name: "Yakult", quantity: 40, price: 18 },
+          ];
+          localStorage.setItem("umeal_stock", JSON.stringify(defaultStock));
+          localStorage.setItem(
+            "foodStock",
+            JSON.stringify(
+              defaultStock.reduce((acc, i) => {
+                acc[i.name] = i.quantity;
+                return acc;
+              }, {})
+            )
+          );
+        }
+        return JSON.parse(localStorage.getItem("umeal_stock")) || [];
+      }
+
+      function saveStock(stock) {
+        localStorage.setItem("umeal_stock", JSON.stringify(stock));
+        localStorage.setItem(
+          "foodStock",
+          JSON.stringify(
+            stock.reduce((acc, i) => {
+              acc[i.name] = i.quantity;
+              return acc;
+            }, {})
+          )
+        );
+      }
+
+      function syncDashboardItems() {
+        const dashboardItems =
+          JSON.parse(localStorage.getItem("foodStock")) || {};
+        let stock = loadStock();
+        Object.keys(dashboardItems).forEach((name) => {
+          if (!stock.find((i) => i.name === name)) {
+            stock.push({
+              name: name,
+              quantity: dashboardItems[name],
+              price: 10,
+            });
+          }
+        });
+        saveStock(stock);
+      }
+
+      function renderStock() {
+        syncDashboardItems();
+        const tableBody = document.querySelector("#stockTable tbody");
+        const stock = loadStock();
+        tableBody.innerHTML = "";
+        if (!stock.length) {
+          tableBody.innerHTML =
+            "<tr><td colspan='4'>No stock available.</td></tr>";
+          return;
+        }
+        stock.forEach((item, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>₱${item.price}</td>
+          <td class="stock-actions">
+            <button class="edit-btn" onclick="editStock(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteStock(${index})">Delete</button>
+          </td>
+        `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      function addStock() {
+        const name = document.getElementById("stockName").value.trim();
+        const qty = parseInt(document.getElementById("stockQty").value);
+        const price = parseFloat(document.getElementById("stockPrice").value);
+        if (!name || isNaN(qty) || isNaN(price))
+          return alert("Please enter valid item name, quantity, and price.");
+
+        let stock = loadStock();
+        const existing = stock.find(
+          (item) => item.name.toLowerCase() === name.toLowerCase()
+        );
+        if (existing) {
+          existing.quantity = qty;
+          existing.price = price;
+        } else {
+          stock.push({ name, quantity: qty, price });
+        }
+
+        saveStock(stock);
+        renderStock();
+
+        document.getElementById("stockName").value = "";
+        document.getElementById("stockQty").value = "";
+        document.getElementById("stockPrice").value = "";
+        alert("✅ Stock added/updated successfully!");
+        populateSpecialItems(); // Update specials dropdown
+      }
+
+      function editStock(index) {
+        const stock = loadStock();
+        const item = stock[index];
+        document.getElementById("stockName").value = item.name;
+        document.getElementById("stockQty").value = item.quantity;
+        document.getElementById("stockPrice").value = item.price;
+      }
+
+      function deleteStock(index) {
+        let stock = loadStock();
+        if (confirm("Are you sure you want to delete this item?")) {
+          stock.splice(index, 1);
+          saveStock(stock);
+          renderStock();
+          populateSpecialItems();
+        }
+      }
+
+      // ---------------- Daily Specials ----------------
+      function getSpecials() {
+        return JSON.parse(localStorage.getItem("dailySpecials") || "{}");
+      }
+
+      function saveSpecials(specials) {
+        localStorage.setItem("dailySpecials", JSON.stringify(specials));
+      }
+
+      function populateSpecialItems() {
+        const stock = loadStock();
+        const select = document.getElementById("specialItem");
+        select.innerHTML = "";
+        stock.forEach((item) => {
+          const opt = document.createElement("option");
+          opt.value = item.name;
+          opt.textContent = item.name;
+          select.appendChild(opt);
+        });
+      }
+
+      function renderSpecials() {
+        const specials = getSpecials();
+        const list = document.getElementById("specialsList");
+        list.innerHTML = "";
+        Object.keys(specials).forEach((day) => {
+          if (specials[day].length === 0) return;
+          const div = document.createElement("div");
+          div.innerHTML = `<strong>${day}:</strong> `;
+          specials[day].forEach((name) => {
+            const span = document.createElement("span");
+            span.className = "specials-item";
+            span.textContent = name;
+            const btn = document.createElement("button");
+            btn.textContent = "×";
+            btn.onclick = () => removeSpecial(day, name);
+            span.appendChild(btn);
+            div.appendChild(span);
+          });
+          list.appendChild(div);
+        });
+      }
+
+      function addSpecial() {
+        const day = document.getElementById("specialDay").value;
+        const item = document.getElementById("specialItem").value;
+        const specials = getSpecials();
+        if (!specials[day]) specials[day] = [];
+        if (!specials[day].includes(item)) specials[day].push(item);
+        saveSpecials(specials);
+        renderSpecials();
+        alert("✅ Special added!");
+      }
+
+      function removeSpecial(day, name) {
+        const specials = getSpecials();
+        specials[day] = specials[day].filter((i) => i !== name);
+        saveSpecials(specials);
+        renderSpecials();
+      }
+
+      populateSpecialItems();
+      renderSpecials();
+      renderStock();
+      renderStaffOrders();
+      showTab("orders");
+    </script>
+  </body>
+</html>

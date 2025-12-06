@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UMEAL - Profile</title>
+  <link rel="stylesheet" href="profile.css" />
+ </head>
+<body>
+
+<header class="profile-header">
+  <h2>My Profile</h2>
+</header>
+
+<div class="tabs-container">
+  <button class="tab-btn active" id="tabProfile">Profile</button>
+  <button class="tab-btn" id="tabHistory">Order History</button>
+</div>
+
+<main id="profileSection">
+  <div class="profile-card">
+    <img id="profileImg" src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User Avatar" class="avatar">
+    <h3 id="username">User</h3>
+    <p>ID: <span id="userId">N/A</span></p>
+
+    <div class="edit-section">
+      <label>Change Name:</label>
+      <input type="text" id="editName" placeholder="Enter new name" class="input-field">
+      <label style="margin-top: 12px; display:block;">Change Photo:</label>
+      <input type="file" id="photoInput" accept="image/*" class="input-field">
+      <button class="btn-save" id="saveBtn">Save Changes</button>
+    </div>
+
+    <div class="profile-actions">
+      <button class="btn logout" id="logoutBtn">Log Out</button>
+    </div>
+  </div>
+</main>
+
+<section class="history-container" id="historySection">
+  <div class="history-title">Order History</div>
+  <div id="orderHistory"></div>
+</section>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html">🍽 Menu</a>
+  <a href="cart.html">🛒 Cart</a>
+  <a href="order.html">📦 Order</a>
+</nav>
+
+<script>
+let currentUser = localStorage.getItem("currentUser");
+if (!currentUser) window.location.replace("login.html");
+currentUser = JSON.parse(currentUser);
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("username").textContent = currentUser.fullname;
+  document.getElementById("userId").textContent = currentUser.idnumber;
+  if (currentUser.profilePic) document.getElementById("profileImg").src = currentUser.profilePic;
+
+  // Upload Profile Picture
+  document.getElementById("photoInput").addEventListener("change", function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById("profileImg").src = e.target.result;
+      currentUser.profilePic = e.target.result;
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Save name changes
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    const newName = document.getElementById("editName").value.trim();
+    if (newName !== "") {
+      currentUser.fullname = newName;
+      document.getElementById("username").textContent = newName;
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      alert("Profile updated successfully!");
+    }
+  });
+
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("currentUser");
+    alert("You have logged out.");
+    window.location.href = "login.html";
+  });
+
+  // Tabs
+  const tabProfile = document.getElementById("tabProfile");
+  const tabHistory = document.getElementById("tabHistory");
+  const profileSection = document.getElementById("profileSection");
+  const historySection = document.getElementById("historySection");
+
+  tabProfile.addEventListener("click", () => {
+    tabProfile.classList.add("active");
+    tabHistory.classList.remove("active");
+    profileSection.style.display = "block";
+    historySection.style.display = "none";
+  });
+
+  tabHistory.addEventListener("click", () => {
+    tabHistory.classList.add("active");
+    tabProfile.classList.remove("active");
+    profileSection.style.display = "none";
+    historySection.style.display = "block";
+    renderOrderHistory();
+  });
+
+  profileSection.style.display = "block";
+  historySection.style.display = "none";
+
+  // ===== ORDER HISTORY =====
+  function loadUserOrders() {
+    const allOrders = JSON.parse(localStorage.getItem("allOrders")) || [];
+    const userFull = (currentUser.fullname || "").trim().toLowerCase();
+    const userId = String(currentUser.idnumber).trim();
+
+    // filter by userId OR fullname
+    return allOrders.filter(o => 
+      (o.userId && String(o.userId).trim() === userId) || 
+      (o.user && o.user.trim().toLowerCase() === userFull)
+    );
+  }
+
+  function groupOrdersIntoTransactions(rawOrders) {
+    const groups = {};
+    rawOrders.forEach(o => {
+      const ts = o.placedAt || Date.now();
+      const key = Math.floor(ts/60000); // group per minute
+      if (!groups[key]) groups[key] = { timestamp: ts, items: [] };
+      groups[key].items.push(o);
+    });
+    return Object.values(groups).map(g => {
+      let total = 0;
+      const items = g.items.map(it => {
+        const price = Number(it.price || 0);
+        const qty = Number(it.quantity || 1);
+        total += price * qty;
+        return { name: it.name || it.item || "Unknown", price, quantity: qty, img: it.img || '' };
+      });
+      return { timestamp: g.timestamp, items, total };
+    }).sort((a,b) => b.timestamp - a.timestamp);
+  }
+
+  function renderOrderHistory() {
+    const rawOrders = loadUserOrders();
+    const container = document.getElementById("orderHistory");
+    container.innerHTML = "";
+    if (!rawOrders.length) return container.innerHTML = "<p style='text-align:center;color:gray;'>No order history found.</p>";
+    
+    const txs = groupOrdersIntoTransactions(rawOrders);
+
+    txs.forEach(tx => {
+      const card = document.createElement("div"); 
+      card.className="transaction-card";
+      const dt = new Date(tx.timestamp);
+      const dateStr = dt.toLocaleDateString("en-PH", { dateStyle:"medium" });
+      const timeStr = dt.toLocaleTimeString("en-PH",{hour:"2-digit",minute:"2-digit"});
+
+      card.innerHTML = `<div class="transaction-header">
+        <div class="tx-info">Transaction • ${dateStr}<div class="tx-meta">${timeStr}</div></div>
+        <div style="text-align:right;"><div class="tx-meta">Items: ${tx.items.length}</div><div style="font-weight:700">₱${tx.total}</div></div>
+      </div>`;
+
+      const itemsWrap = document.createElement("div"); 
+      itemsWrap.className="tx-items";
+      const itemsCol = document.createElement("div"); 
+      itemsCol.style.display="flex"; 
+      itemsCol.style.flexDirection="column"; 
+      itemsCol.style.gap="8px";
+
+      tx.items.forEach(it => {
+        const row = document.createElement("div"); 
+        row.className="tx-item";
+        row.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
+          <img src="${it.img || 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png'}" alt="${it.name}">
+          <div><div class="tx-item-name">${it.name}</div><div style="font-size:13px;color:gray;">₱${it.price} × ${it.quantity}</div></div>
+        </div>`;
+        itemsCol.appendChild(row);
+      });
+
+      itemsWrap.appendChild(itemsCol);
+
+      const summaryCol=document.createElement("div"); 
+      summaryCol.className="tx-summary";
+      summaryCol.innerHTML=`<div>₱${tx.total}</div>
+        <div style="font-size:13px;color:gray;margin-top:6px;">${dateStr} • ${timeStr}</div>
+        <div style="margin-top:8px;"><button class="buy-again-btn" data-group='${JSON.stringify(tx.items)}'>Buy Again</button></div>`;
+      itemsWrap.appendChild(summaryCol);
+
+      // TRANSACTION RATING & COMMENT
+      const ratingKey = `tx_feedback_${tx.timestamp}`;
+      const saved = JSON.parse(localStorage.getItem(ratingKey)) || {stars:0,comment:""};
+      const ratingDiv = document.createElement("div"); ratingDiv.className="rating-container";
+
+      const starsDiv = document.createElement("div"); starsDiv.style.display="flex"; starsDiv.style.gap="4px";
+      for(let s=1; s<=5; s++){
+        const star=document.createElement("span"); 
+        star.className="star"; 
+        star.innerHTML="★";
+        if(saved.stars>=s) star.classList.add("selected");
+        star.addEventListener("click", ()=>{
+          saved.stars = s;
+          localStorage.setItem(ratingKey, JSON.stringify(saved));
+          renderOrderHistory();
+        });
+        starsDiv.appendChild(star);
+      }
+      ratingDiv.appendChild(starsDiv);
+
+      const commentBox = document.createElement("textarea"); 
+      commentBox.className="feedback-comment"; 
+      commentBox.placeholder="Write your feedback..."; 
+      commentBox.value=saved.comment;
+      ratingDiv.appendChild(commentBox);
+
+      const saveBtn = document.createElement("button"); 
+      saveBtn.className="save-feedback-btn"; 
+      saveBtn.textContent="Save Feedback";
+      saveBtn.addEventListener("click", ()=>{
+        saved.comment = commentBox.value.trim();
+        localStorage.setItem(ratingKey, JSON.stringify(saved));
+
+        const allOrders = JSON.parse(localStorage.getItem("allOrders")) || [];
+        tx.items.forEach(item => {
+          allOrders.forEach(o => {
+            if(o.placedAt === tx.timestamp && (o.name === item.name || o.item === item.name)){
+              o.rating = saved.stars;
+              o.feedback = saved.comment;
+            }
+          });
+        });
+        localStorage.setItem("allOrders", JSON.stringify(allOrders));
+        alert("✅ Feedback saved!");
+      });
+      ratingDiv.appendChild(saveBtn);
+
+      card.appendChild(itemsWrap);
+      card.appendChild(ratingDiv);
+      container.appendChild(card);
+    });
+
+    // Buy Again functionality
+    document.querySelectorAll(".buy-again-btn").forEach(btn=>{
+      btn.addEventListener("click",()=> {
+        const items = JSON.parse(btn.dataset.group || "[]");
+        if(!items.length) return alert("No items to reorder.");
+        const cart=JSON.parse(localStorage.getItem("cart"))||[];
+        items.forEach(it=>{
+          const existing=cart.find(c=>c.name===it.name);
+          if(existing) existing.quantity=(existing.quantity||0)+it.quantity;
+          else cart.push(it);
+        });
+        localStorage.setItem("cart",JSON.stringify(cart));
+        alert("✅ Items added to cart. Open Cart to checkout.");
+        window.location.href="cart.html";
+      });
+    });
+  }
+
+  renderOrderHistory();
+});
+</script>
+
+</body>
+</html>

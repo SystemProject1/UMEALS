@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMeal - Register</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="login-body">
+
+  <div class="login-container">
+    <h1 class="brand">UMEAL</h1>
+    <img src="logooo-removebg-preview.png" alt="UMeal" class="school-logo">
+
+    <form id="registerForm" class="login-form">
+      <label for="fullname">FULL NAME</label>
+      <input type="text" id="fullname" placeholder="Enter Full Name" required>
+
+      <label for="idnumber">ID NUMBER</label>
+      <input type="text" id="idnumber" placeholder="Enter ID Number" required>
+
+      <label for="password">PASSWORD</label>
+      <input type="password" id="password" placeholder="Enter Password" required>
+
+      <label for="usertype">USER TYPE</label>
+      <select id="usertype" required>
+        <option value="">Select user type</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+      </select>
+
+      <button type="submit" class="btn">Register</button>
+      <p>Already have an account? <a href="login.html">Log in</a></p>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const fullname = document.getElementById("fullname").value.trim();
+      const idnumber = document.getElementById("idnumber").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const usertype = document.getElementById("usertype").value;
+
+      if (!fullname || !idnumber || !password || !usertype) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (users.find(u => u.idnumber === idnumber)) {
+        alert("ID already registered. Please log in.");
+        return;
+      }
+
+      users.push({ fullname, idnumber, password, usertype });
+      localStorage.setItem("users", JSON.stringify(users));
+
+      // Redirect to login page and pass success message
+      window.location.href = "login.html?registered=success";
+    });
+  </script>
+
+</body>
+</html>

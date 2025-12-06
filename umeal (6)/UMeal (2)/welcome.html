@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Welcome</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="login-body">
+
+  <div class="login-container">
+    <h1 class="brand">UMEAL</h1>
+    <img src="logooo-removebg-preview.png" alt="UMeal" class="school-logo">
+
+    <h2>Hello, <span id="fullname"></span>! Welcome to UMEAL</h2>
+    <p>You are logged in as a <span id="usertype"></span>.</p>
+
+    <!-- Browse Food Button -->
+    <button id="browseBtn" class="btn">Browse Food</button>
+  </div>
+
+  <script>
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    
+    if (!currentUser) {
+      window.location.href = "login.html"; // redirect if not logged in
+    } else {
+      document.getElementById("fullname").textContent = currentUser.fullname;
+      document.getElementById("usertype").textContent = currentUser.usertype;
+    }
+
+    // Browse Food button redirects to dashboard
+    document.getElementById("browseBtn").addEventListener("click", function() {
+      window.location.href = "dashboard.html"; // replace with your actual dashboard page
+    });
+  </script>
+
+</body>
+</html>

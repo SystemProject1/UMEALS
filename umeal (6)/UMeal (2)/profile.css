@@ -1,0 +1,145 @@
+/* General Layout */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fefefe;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.profile-header {
+  background: #b91c1c; /* Deep Red */
+  padding: 15px;
+  text-align: center;
+  color: white;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* Profile Card */
+.profile-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.profile-card {
+  background: #fff;
+  border: 2px solid #b91c1c;
+  border-radius: 12px;
+  padding: 30px 25px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.profile-card .avatar {
+  width: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.profile-card h3 {
+  margin: 10px 0 5px;
+  font-size: 1.6rem;
+  color: #b91c1c;
+}
+
+.profile-card p {
+  margin: 0 0 25px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn {
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+/* About Button */
+.btn.about {
+  background: #fff;
+  color: #b91c1c;
+  border: 2px solid #b91c1c;
+}
+.btn.about:hover {
+  background: #b91c1c;
+  color: #fff;
+}
+
+/* Logout Button */
+.btn.logout {
+  background: #b91c1c;
+  color: #fff;
+  border: 2px solid #b91c1c;
+}
+.btn.logout:hover {
+  background: #7f1d1d;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  background: #f8f8f8;
+  padding: 12px 0;
+  border-top: 1px solid #ccc;
+}
+.bottom-nav a {
+  text-decoration: none;
+  color: #444;
+  font-size: 0.9rem;
+}
+.bottom-nav a.active {
+  color: #b91c1c;
+  font-weight: bold;
+}
+/* CLEAN UI FIXES */
+    .tabs-container { display: flex; justify-content: center; gap: 12px; margin: 20px auto; width: 90%; max-width: 400px; }
+    .tab-btn { flex: 1; padding: 12px; background: #f3f3f3; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { background: #4CAF50; color: white; }
+    .profile-card { background: white; padding: 25px; border-radius: 15px; text-align: center; width: 90%; max-width: 380px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .avatar { width: 120px; height: 120px; border-radius: 50%; margin-bottom: 10px; border: 3px solid #eee; object-fit: cover; }
+    .edit-section { margin-top: 20px; text-align: left; }
+    .input-field { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-top: 6px; font-size: 15px; }
+    .btn-save { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 8px; margin-top: 12px; font-size: 16px; }
+    .profile-actions { margin-top: 20px; }
+    .logout { width: 100%; padding: 12px; background: #ff4d4d; color: white; border: none; border-radius: 8px; font-size: 16px; }
+    /* ORDER HISTORY */
+    .history-container { margin: 20px auto; width: 94%; max-width: 720px; display: none; }
+    .history-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; text-align: center; }
+    .transaction-card { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .transaction-header { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .tx-info { font-size:14px; color:#555; }
+    .tx-items { display: grid; grid-template-columns: 1fr auto; gap:8px 12px; align-items:center; }
+    .tx-item { display:flex; gap:10px; align-items:center; }
+    .tx-item img { width:44px; height:44px; object-fit:cover; border-radius:6px; }
+    .tx-item-name { font-weight:600; font-size:14px; }
+    .tx-summary { text-align:right; font-weight:700; min-width:120px; }
+    .buy-again-btn { padding:10px; border-radius:8px; border:none; background:#007bff; color:white; cursor:pointer; width:160px; justify-self:flex-end; }
+    .tx-meta { font-size:13px; color:gray; }
+    .rating-container { margin-top:8px; display:flex; flex-direction:column; gap:4px; }
+    .star { cursor:pointer; font-size:18px; color: gray; }
+    .star.selected { color: gold; }
+    .feedback-comment { width: 100%; margin-top:4px; border-radius:6px; padding:6px; border:1px solid #ccc; font-size:13px; resize: none; }
+    .save-feedback-btn { margin-top:4px; padding:6px 10px; font-size:13px; border:none; border-radius:6px; background:#4CAF50; color:white; cursor:pointer; }
+    @media (max-width:520px){ .tx-items { grid-template-columns: 1fr; } .tx-summary { text-align:left; } .buy-again-btn { width:100%; } }
+  

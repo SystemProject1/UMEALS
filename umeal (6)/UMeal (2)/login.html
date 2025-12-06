@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMEAL - Login</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body class="login-body">
+
+  <div class="login-container">
+    <h1 class="brand">UMeal</h1>
+    <img src="logooo-removebg-preview.png" alt="UMeal" class="school-logo">
+
+    <form id="loginForm" class="login-form">
+      <label for="idnumber">ID NUMBER</label>
+      <input type="text" id="idnumber" placeholder="Enter ID Number" required>
+
+      <label for="password">PASSWORD</label>
+      <input type="password" id="password" placeholder="Enter Password" required>
+
+      <label for="usertype">USER TYPE</label>
+      <select id="usertype" required>
+        <option value="">Select user type</option>
+        <option value="teacher">Teacher</option>
+        <option value="student">Student</option>
+      </select>
+
+      <button type="submit" class="btn">Log in</button>
+      <p>Don't have an account? <a href="register.html">Register</a></p>
+    </form>
+  </div>
+
+  <script>
+    // Check for registration success message
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === 'success') {
+      alert("Registration successful! You can now log in.");
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const idnumber = document.getElementById("idnumber").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const usertype = document.getElementById("usertype").value;
+
+      if (!idnumber || !password || !usertype) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(u => u.idnumber === idnumber && u.password === password && u.usertype === usertype);
+
+      if (user) {
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        window.location.href = "welcome.html";
+      } else {
+        alert("Invalid ID, password, or user type.");
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMEAL - Admin Login</title>
+    <link rel="stylesheet" href="admin-login.css" />
+  </head>
+  <body>
+    <div class="login-box">
+      <h2>UMEAL Admin Login</h2>
+      <input type="text" id="userId" placeholder="Username" required />
+      <input type="password" id="userPass" placeholder="Password" required />
+      <button id="loginBtn">Login</button>
+      <p id="errorMsg" class="error"></p>
+    </div>
+
+    <script>
+      if (!localStorage.getItem("umeal_users")) {
+        const defaultUsers = [
+          {
+            id: "admin",
+            password: "admin123",
+            role: "admin",
+            name: "Administrator",
+          },
+          {
+            id: "staff",
+            password: "staff123",
+            role: "staff",
+            name: "Canteen Staff",
+          },
+        ];
+        localStorage.setItem("umeal_users", JSON.stringify(defaultUsers));
+      }
+
+      document.getElementById("loginBtn").addEventListener("click", () => {
+        const userId = document.getElementById("userId").value.trim();
+        const userPass = document.getElementById("userPass").value.trim();
+        const errorMsg = document.getElementById("errorMsg");
+
+        const users = JSON.parse(localStorage.getItem("umeal_users")) || [];
+        const user = users.find(
+          (u) => u.id === userId && u.password === userPass
+        );
+
+        if (!user) {
+          errorMsg.textContent =
+            "❌ No such user. Please check your ID or password.";
+          return;
+        }
+
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        alert("✅ Welcome, " + user.name + "!");
+
+        // ✅ Force redirect using absolute relative path
+        window.location.assign("./adminpanel.html");
+      });
+    </script>
+  </body>
+</html>

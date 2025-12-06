@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMEAL - Orders</title>
+    <link rel="stylesheet" href="order.css" />
+    <link rel="stylesheet" href="cart.css" />
+    <style>
+      .order-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+      }
+      .order-item img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header MUST be inside body -->
+    <header>
+      <button onclick="history.back()">⬅</button>
+      <h2>My Orders</h2>
+    </header>
+
+    <!-- Orders Section -->
+    <main class="orders">
+      <div class="order-header">
+        <span>Order Item</span>
+        <span>Pick-up Time</span>
+        <span>Status</span>
+      </div>
+      <div id="order-list"></div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="dashboard.html">🍽 Food</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="order.html" class="active">📦 Order</a>
+    </nav>
+
+    <script>
+      const currentUserObj = JSON.parse(
+        localStorage.getItem("currentUser") ||
+          '{"fullname":"guest","idnumber":"0"}'
+      );
+      const currentUser = currentUserObj.fullname || "guest";
+      let orders =
+        JSON.parse(localStorage.getItem("orders_" + currentUser)) || [];
+      let allOrders = JSON.parse(localStorage.getItem("allOrders")) || [];
+
+      allOrders = allOrders.map((o) => {
+        if (!o.user) o.user = currentUser;
+        if (!o.userId) o.userId = currentUserObj.idnumber;
+        if (!o.placedAt) o.placedAt = Date.now();
+        return o;
+      });
+      localStorage.setItem("allOrders", JSON.stringify(allOrders));
+
+      orders.forEach((o) => {
+        if (!o.user) o.user = currentUser;
+        if (!o.userId) o.userId = currentUserObj.idnumber;
+        if (!o.placedAt) o.placedAt = Date.now();
+        const exists = allOrders.some(
+          (a) => a.code === o.code && a.user === o.user
+        );
+        if (!exists) allOrders.push(o);
+      });
+      localStorage.setItem("allOrders", JSON.stringify(allOrders));
+
+      function renderOrders() {
+        const container = document.getElementById("order-list");
+        container.innerHTML = "";
+
+        if (orders.length === 0) {
+          container.innerHTML = "<p>No orders found.</p>";
+          return;
+        }
+
+        // Group orders by code
+        const groupedOrders = {};
+        orders.forEach((order) => {
+          if (!groupedOrders[order.code]) groupedOrders[order.code] = [];
+          groupedOrders[order.code].push(order);
+        });
+
+        Object.values(groupedOrders).forEach((orderGroup, index) => {
+          const firstOrder = orderGroup[0];
+          let orderTime = new Date(firstOrder.placedAt);
+          let nowPH = new Date(
+            new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+          );
+          let minutesPassed = Math.floor((nowPH - orderTime) / 60000);
+          let allowCancel =
+            minutesPassed < 15 && firstOrder.status === "Pending";
+
+          if (minutesPassed >= 15 && firstOrder.status === "Pending") {
+            firstOrder.status = "Ready";
+            localStorage.setItem(
+              "orders_" + currentUser,
+              JSON.stringify(orders)
+            );
+            allOrders = allOrders.map((a) => {
+              if (a.code === firstOrder.code && a.user === currentUser)
+                a.status = "Ready";
+              return a;
+            });
+            localStorage.setItem("allOrders", JSON.stringify(allOrders));
+          }
+
+          const noteKey = `order_note_${firstOrder.code}`;
+          const staffNote = localStorage.getItem(noteKey);
+
+          // List all items in this order (with images)
+          let itemsHTML = orderGroup
+            .map(
+              (o) => `<div class="order-item">
+                        <img src="${o.img}" alt="${o.name}">
+                        <span>${o.name} ₱${o.price} × ${o.quantity ?? 1} = ₱${
+                o.price * (o.quantity ?? 1)
+              }</span>
+                       </div>`
+            )
+            .join("");
+
+          container.innerHTML += `
+            <div class="order-card">
+              <div class="order-info">
+                ${itemsHTML}
+                <small><strong>Order Code:</strong> ${
+                  firstOrder.code || "N/A"
+                }</small><br>
+                <small>Placed At: ${orderTime.toLocaleString("en-PH", {
+                  timeZone: "Asia/Manila",
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}</small>
+                ${
+                  staffNote
+                    ? `<div class="staff-note">📝 Note from staff: ${staffNote}</div>`
+                    : ""
+                }
+              </div>
+              <span class="pickup-time">${firstOrder.time || "Not set"}</span>
+              <span class="status ${firstOrder.status.toLowerCase()}">${
+            firstOrder.status
+          }</span>
+              ${
+                allowCancel
+                  ? `<button class="cancel-btn" onclick="cancelOrderGroup('${firstOrder.code}')">✖</button>`
+                  : ""
+              }
+            </div>
+          `;
+        });
+      }
+
+      function cancelOrderGroup(code) {
+        const orderIndexes = orders
+          .map((o, i) => (o.code === code ? i : -1))
+          .filter((i) => i !== -1);
+
+        let orderTime = new Date(orders[orderIndexes[0]].placedAt);
+        let nowPH = new Date(
+          new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+        );
+        let minutesPassed = Math.floor((nowPH - orderTime) / 60000);
+
+        if (minutesPassed >= 5) {
+          alert(
+            "❌ Cancellation time limit has passed. Order can no longer be cancelled."
+          );
+          return;
+        }
+
+        let confirmCancel = confirm(
+          "Are you sure you want to cancel this order?"
+        );
+        if (confirmCancel) {
+          orderIndexes.forEach((i) => {
+            orders[i].status = "Cancelled";
+            allOrders = allOrders.map((o) => {
+              if (o.code === orders[i].code && o.user === currentUser)
+                o.status = "Cancelled";
+              return o;
+            });
+          });
+
+          let walkinOrders =
+            JSON.parse(localStorage.getItem("walkinOrders")) || [];
+          orderIndexes.forEach((i) => walkinOrders.push(orders[i]));
+          localStorage.setItem("walkinOrders", JSON.stringify(walkinOrders));
+
+          orders = orders.filter((o) => o.code !== code);
+          localStorage.setItem("orders_" + currentUser, JSON.stringify(orders));
+          localStorage.setItem("allOrders", JSON.stringify(allOrders));
+
+          renderOrders();
+        }
+      }
+
+      renderOrders();
+    </script>
+  </body>
+</html>

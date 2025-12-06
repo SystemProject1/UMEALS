@@ -1,0 +1,98 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+
+  /* Background picture */
+  background: url("bgg.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* Para ang login form makita tarong */
+.login-container {
+  background: rgba(255, 255, 255, 0.9); /* white transparent layer */
+  padding: 30px;
+  border-radius: 10px;
+  width: 320px;
+  margin: 100px auto;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.logo-text {
+  color: white;
+  margin-bottom: 10px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.school-logo {
+  width: 100px;
+  margin: 10px auto;
+  display: block;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.login-form label {
+  text-align: left;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.login-form input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.btn {
+  background: #b60000;
+  color: white;
+  border: none;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn:hover {
+  background: #900000;
+}
+
+.forgot {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.9r;
+  color: gray;
+  text-decoration: none;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}

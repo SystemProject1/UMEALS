@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMEAL - Cart</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="cart.css" />
+    <link rel="stylesheet" href="order.css" />
+  </head>
+  <body class="dashboard-body">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="user-info">
+        <img src="Profile.jfif" alt="User" class="avatar" />
+      </div>
+
+      <div class="icons">
+        <div class="notif-container">
+          <a href="#" class="bell" id="notifBell">🔔</a>
+          <div class="notif-dropdown" id="notifDropdown">
+            <h4>Notifications</h4>
+            <div id="notifList"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <h2>Your Cart</h2>
+      <div id="cart-items"></div>
+      <div id="cart-total"></div>
+
+      <div class="pickup-time-container">
+        <label for="pickup-time">Select Pick-up Time:</label>
+        <input type="time" id="pickup-time" required />
+      </div>
+
+      <div style="text-align: center">
+        <button id="order-placed">Place Order</button>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="dashboard.html">🍽 Food</a>
+      <a href="cart.html" class="active">🛒 Cart</a>
+      <a href="order.html">📦 Order</a>
+    </nav>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const cartContainer = document.querySelector("#cart-items");
+        const cartTotal = document.querySelector("#cart-total");
+        const pickupInput = document.getElementById("pickup-time");
+        const placeOrderBtn = document.getElementById("order-placed");
+        const notifBell = document.getElementById("notifBell");
+        const notifDropdown = document.getElementById("notifDropdown");
+        const notifList = document.getElementById("notifList");
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        notifBell.addEventListener("click", (e) => {
+          e.preventDefault();
+          notifDropdown.classList.toggle("active");
+          renderNotifications();
+        });
+
+        document.addEventListener("click", (e) => {
+          if (
+            !notifDropdown.contains(e.target) &&
+            !notifBell.contains(e.target)
+          ) {
+            notifDropdown.classList.remove("active");
+          }
+        });
+
+        function renderNotifications() {
+          const notifs =
+            JSON.parse(localStorage.getItem("umeal_notifications")) || [];
+          notifList.innerHTML = "";
+          if (notifs.length === 0) {
+            notifList.innerHTML = `<div class="notif-empty">No notifications yet</div>`;
+            return;
+          }
+          notifs
+            .slice(-5)
+            .reverse()
+            .forEach((n) => {
+              const div = document.createElement("div");
+              div.classList.add("notif-item");
+              div.innerHTML = `<span style="margin-right:5px;">🛒</span> ${
+                n.message || "New order placed!"
+              }<br><small style="color:gray;">${new Date(
+                n.time
+              ).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}</small>`;
+              notifList.appendChild(div);
+            });
+        }
+
+        function addNotification(message) {
+          const notifs =
+            JSON.parse(localStorage.getItem("umeal_notifications")) || [];
+          notifs.push({ message, time: Date.now() });
+          localStorage.setItem("umeal_notifications", JSON.stringify(notifs));
+        }
+
+        /* ---------------- CART RENDERING BELOW (UNCHANGED) ---------------- */
+
+        function renderCart() {
+          cartContainer.innerHTML = "";
+          if (cart.length === 0) {
+            cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+            cartTotal.innerHTML = "";
+            return;
+          }
+
+          const stock = JSON.parse(localStorage.getItem("umeal_stock")) || [];
+
+          cart.forEach((item, index) => {
+            const div = document.createElement("div");
+            div.className = "cart-item";
+
+            const stockItem = stock.find((s) => s.name === item.name);
+            const availableQty = stockItem ? stockItem.quantity : 0;
+            const isAvailable = availableQty >= item.quantity;
+
+            div.innerHTML = `
+              <input type="checkbox" class="select-item" data-index="${index}" ${
+              isAvailable ? "checked" : "disabled"
+            } style="margin-right:10px;">
+              <img src="${item.img}" alt="${item.name}">
+              <div>
+                <h3>${item.name} ${!isAvailable ? "(Unavailable)" : ""}</h3>
+                <p>
+                  ₱${item.price} × 
+                  <button class="qty-btn minus" ${
+                    isAvailable ? "" : "disabled"
+                  }>-</button>
+                  <span class="qty">${item.quantity}</span>
+                  <button class="qty-btn plus" ${
+                    isAvailable ? "" : "disabled"
+                  }>+</button>
+                  = ₱<span class="item-total">${
+                    item.price * item.quantity
+                  }</span>
+                </p>
+                <button class="remove-btn">Remove</button>
+              </div>
+            `;
+
+            if (!isAvailable) div.style.opacity = 0.5;
+
+            cartContainer.appendChild(div);
+
+            const checkbox = div.querySelector(".select-item");
+            const itemTotalSpan = div.querySelector(".item-total");
+
+            checkbox.addEventListener("change", updateTotal);
+
+            div.querySelector(".minus").addEventListener("click", () => {
+              if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                itemTotalSpan.textContent =
+                  cart[index].price * cart[index].quantity;
+                div.querySelector(".qty").textContent = cart[index].quantity;
+                updateTotal();
+              }
+            });
+
+            div.querySelector(".plus").addEventListener("click", () => {
+              if (cart[index].quantity < availableQty) {
+                cart[index].quantity += 1;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                itemTotalSpan.textContent =
+                  cart[index].price * cart[index].quantity;
+                div.querySelector(".qty").textContent = cart[index].quantity;
+                updateTotal();
+              } else {
+                alert(
+                  `⚠ Only ${availableQty} of ${item.name} available in stock.`
+                );
+              }
+            });
+
+            div.querySelector(".remove-btn").addEventListener("click", () => {
+              cart.splice(index, 1);
+              localStorage.setItem("cart", JSON.stringify(cart));
+              renderCart();
+            });
+          });
+
+          updateTotal();
+        }
+
+        function updateTotal() {
+          const checkboxes = document.querySelectorAll(".select-item");
+          let total = 0;
+          checkboxes.forEach((cb) => {
+            if (cb.checked) {
+              const idx = cb.dataset.index;
+              total += cart[idx].price * cart[idx].quantity;
+            }
+          });
+          cartTotal.innerHTML = `<div class="total-container"><span>Total Cost:</span><strong>₱${total}</strong></div>`;
+        }
+
+        renderCart();
+
+        function generateOrderCode() {
+          return "ORD-" + Date.now().toString(36).toUpperCase().slice(-6);
+        }
+
+        /* ------------------------------------------------------------
+            ✅ FIXED CURRENT USER — NO OTHER CHANGES
+        ------------------------------------------------------------ */
+
+        placeOrderBtn.addEventListener("click", () => {
+          /* ---------- FIXED PART START ---------- */
+          let savedUser = localStorage.getItem("currentUser");
+          let currentUserObj;
+
+          try {
+            currentUserObj = JSON.parse(savedUser);
+          } catch {
+            currentUserObj = { fullname: "guest", idnumber: "0" };
+          }
+
+          const currentUser = currentUserObj.fullname || "guest";
+          /* ---------- FIXED PART END ---------- */
+
+          if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+          }
+
+          const pickupTime = pickupInput.value;
+          if (!pickupTime) {
+            alert("Please select a pick-up time!");
+            return;
+          }
+
+          const [hours, minutes] = pickupTime.split(":").map(Number);
+          const pickupDate = new Date();
+          pickupDate.setHours(hours, minutes, 0, 0);
+
+          const now = new Date();
+          const openHour = 8;
+          const closeHour = 17;
+
+          if (hours < openHour || hours >= closeHour) {
+            alert(
+              `🚫 Pick-up time must be between ${openHour}:00AM to ${closeHour}:00PM`
+            );
+            return;
+          }
+
+          if (pickupDate < now) {
+            alert(
+              "🚫 You cannot select a pick-up time earlier than the current time!"
+            );
+            return;
+          }
+
+          const nowPlus15 = new Date(now.getTime() + 15 * 60 * 1000);
+          if (pickupDate < nowPlus15) {
+            alert("🚫 Pick-up time must be at least 15 minutes from now!");
+            return;
+          }
+
+          const checkboxes = document.querySelectorAll(".select-item");
+          let selectedItems = [];
+
+          checkboxes.forEach((cb) => {
+            if (cb.checked) {
+              selectedItems.push(cart[cb.dataset.index]);
+            }
+          });
+
+          if (selectedItems.length === 0) {
+            alert("Please select at least one item to checkout!");
+            return;
+          }
+
+          let orders =
+            JSON.parse(localStorage.getItem("orders_" + currentUser)) || [];
+
+          let newOrders = selectedItems.map((item) => ({
+            ...item,
+            time: pickupTime,
+            quantity: item.quantity || 1,
+            status: "Pending",
+            placedAt: Date.now(),
+            code: generateOrderCode(),
+          }));
+
+          orders = orders.concat(newOrders);
+          localStorage.setItem("orders_" + currentUser, JSON.stringify(orders));
+
+          /* ------------------------------------------------------------
+              ✅ FIXED allOrders — user + userId correct now
+          ------------------------------------------------------------ */
+
+          let allOrders = JSON.parse(localStorage.getItem("allOrders")) || [];
+          allOrders = allOrders.concat(
+            newOrders.map((o) => ({
+              ...o,
+              user: currentUserObj.fullname,
+              userId: currentUserObj.idnumber,
+            }))
+          );
+          localStorage.setItem("allOrders", JSON.stringify(allOrders));
+
+          addNotification(
+            "🛒 You placed " +
+              selectedItems.length +
+              " new item(s) for " +
+              pickupTime
+          );
+
+          cart = cart.filter((item, index) => !checkboxes[index].checked);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          updateCartCount();
+
+          alert("✅ Order placed successfully!");
+          renderCart();
+          renderNotifications();
+
+          window.location.href = "order.html";
+        });
+
+        window.addEventListener("load", () => {
+          if (pickupInput) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, "0");
+            const minutes = String(now.getMinutes()).padStart(2, "0");
+            pickupInput.min = `${hours}:${minutes}`;
+          }
+        });
+      });
+
+      function updateCartCount() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let badge = document.querySelector(".cart-count");
+        if (badge) {
+          badge.textContent = cart.length;
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #b0170f; /* exact red tone like screenshot */
+  color: white;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 60px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: yellow;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 40px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+  color: yellow;
+}
+
+/* HERO SECTION */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 80px;
+}
+
+/* LEFT SIDE */
+.left-side {
+  width: 45%;
+  text-align: left;
+}
+
+.yummy-img {
+  width: 300px;
+  margin-bottom: -30px;
+}
+
+.foods-img {
+  width: 400px;
+  display: block;
+}
+
+.tagline {
+  margin-top: 30px;
+  font-size: 25px;
+  color: white;
+}
+
+/* RIGHT SIDE */
+.right-side {
+  width: 45%;
+  text-align: left;
+}
+
+.right-side h1 {
+  font-size: 60px;
+  line-height: 60px;
+  margin-bottom: 40px;
+}
+
+.right-side span {
+  color: yellow;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 12px 28px;
+  background: white;
+  color: #b0170f;
+  border-radius: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+}
+
+
+.btn:hover {
+  background-color: yellow; /* color when hovered */
+  transform: scale(1.05);    /* slight zoom effect */
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  margin-top: 20px;
+}
+
